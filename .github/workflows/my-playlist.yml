@@ -1,15 +1,20 @@
 name: my-playlist
-# Daily: rebuild your playlist from upstream data, test every stream, publish only working ones.
-# Result URL after first run + enabling Pages (branch gh-pages):  https://<you>.github.io/<repo>/my-iptv.working.m3u
+# Daily: rebuild your playlist from upstream data, test every stream, publish ONLY the working ones.
+# URL (after enabling Pages on branch gh-pages):  https://<you>.github.io/<repo>/playlist.m3u
+# Note: streams are tested from GitHub's US data centers, not from your home network.
 on:
   schedule:
     - cron: '17 3 * * *'
   workflow_dispatch:
 permissions:
   contents: write
+concurrency:
+  group: my-playlist
+  cancel-in-progress: false
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -19,11 +24,20 @@ jobs:
       - run: npm ci
       - run: npm run playlist:generate
       - run: npm run my:build
-      - run: npm run my:check
-      - name: Publish to gh-pages
+      - run: npm run my:check -- --retries 2 --timeout 15000
+      - name: Safety check (never publish an empty or collapsed list)
         run: |
-          cd my-playlist/dist
-          touch .nojekyll
+          n=$(grep -c '^#EXTINF' my-playlist/dist/my-iptv.working.m3u || true)
+          echo "working channels: $n"
+          if [ "$n" -lt 100 ]; then echo "Too few working streams ($n). Not publishing."; exit 1; fi
+      - name: Publish only the working playlist to gh-pages
+        run: |
+          mkdir site
+          cp my-playlist/dist/my-iptv.working.m3u site/playlist.m3u
+          cp my-playlist/dist/my-iptv.working.report.json site/report.json
+          printf '<!doctype html><meta charset=utf-8><title>My IPTV</title><p>Playlist URL: <code>playlist.m3u</code> (updated %s UTC)</p>' "$(date -u '+%F %H:%M')" > site/index.html
+          touch site/.nojekyll
+          cd site
           git init -q -b gh-pages
           git config user.name "github-actions"
           git config user.email "actions@users.noreply.github.com"

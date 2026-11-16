@@ -151,7 +151,7 @@ Open `my-iptv.working.m3u` in VLC, Kodi, Jellyfin, TiviMate and similar apps (Ne
    ```
 2. In the repo, Settings, Pages: deploy from branch `gh-pages`.
 3. Actions tab: run `my-playlist` once with "Run workflow". It then runs daily.
-4. Your URL: `https://<you>.github.io/<repo>/my-iptv.working.m3u`.
+4. Your URL: `https://<you>.github.io/<repo>/playlist.m3u` (only the tested, working playlist is published).
 
 Caveats: GitHub runners are in US data centers, so streams that block data centers or non-US IPs fail there and are dropped, even if they would play at your home. If that matters, schedule `npm run my:all` on your own machine or a home server instead. The workflow overwrites `gh-pages` each run. Publishing the list publicly is your call.
 
