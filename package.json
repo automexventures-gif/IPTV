@@ -28,7 +28,8 @@
     "my:list": "node my-playlist/build.mjs --list",
     "my:check": "node my-playlist/check.mjs",
     "my:all": "npm run my:build && npm run my:check",
-    "my:prune": "node my-playlist/prune.mjs"
+    "my:prune": "node my-playlist/prune.mjs",
+    "my:update": "node my-playlist/update.mjs"
   },
   "author": "Arhey",
   "private": true,

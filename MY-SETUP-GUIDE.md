@@ -124,6 +124,20 @@ npm run my:prune -- --all       # also block timeouts, 403, 5xx (risky: temporar
 
 This edits `blocklist_ids` in `my-playlist/preferences.json`. To undo, delete ids from that list. It uses the report from the last check, so run `npm run my:all` first.
 
+## Step 7c. Pick up new upstream channels later
+
+iptv-org adds and removes links every day. To refresh your list without re-testing everything:
+
+```bash
+npm run my:update -- --dry-run   # preview: new, changed and removed channels, nothing tested
+npm run my:update                # download latest, test ONLY new/changed links, merge the working ones
+npm run my:update -- --retest-failed   # also give previously failed links another chance
+```
+
+How it works: it downloads iptv-org's freshly published `index.m3u`, rebuilds your list from your preferences, and compares it with your last tested list. Anything it has not seen before (or whose link changed) is tested. Working ones are merged into `my-iptv.working.m3u`, channels that disappeared are removed, and the previous version is saved as `my-iptv.working.prev.m3u`. It needs one full `npm run my:all` first.
+
+Limits: unchanged links are not retested, so also run `npm run my:check` now and then. Your repo's own `streams/` snapshot is not updated by this (the script does not need it).
+
 ## Step 8. Watch it
 
 Open `my-iptv.working.m3u` in VLC, Kodi, Jellyfin, TiviMate and similar apps (Network stream or Playlist URL).
