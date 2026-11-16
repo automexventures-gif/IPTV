@@ -1,0 +1,37 @@
+{
+  "_readme": "Edit this file, then run: npm run my:build. Empty list [] means 'no restriction'. See MY-SETUP-GUIDE.md for what every key does.",
+
+  "filters": {
+    "categories_include": ["news", "sports", "movies", "documentary", "kids"],
+    "categories_exclude": [],
+    "countries_include": ["us", "uk", "ca", "au"],
+    "countries_exclude": [],
+    "languages_include": ["eng"],
+    "languages_exclude": [],
+    "name_include": [],
+    "name_exclude": ["shopping", "teleshop"],
+    "min_height": 480,
+    "max_height": 0,
+    "drop_unknown_quality": false,
+    "allow_geo_blocked": false,
+    "allow_not_247": true,
+    "exclude_closed": true
+  },
+
+  "always_include_ids": [],
+  "blocklist_ids": [],
+
+  "extra_playlists": [],
+  "epg_url": "",
+  "max_channels": 0,
+
+  "output": {
+    "directory": "my-playlist/dist",
+    "filename": "my-iptv",
+    "group_by": "category",
+    "category_priority": ["news", "sports", "movies", "documentary", "kids", "entertainment", "general"],
+    "sort_by": "group_then_name",
+    "also_split_by": "category",
+    "extra_group_name": "Custom"
+  }
+}

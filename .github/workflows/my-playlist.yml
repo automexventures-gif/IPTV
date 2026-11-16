@@ -1,0 +1,32 @@
+name: my-playlist
+# Daily: rebuild your playlist from upstream data, test every stream, publish only working ones.
+# Result URL after first run + enabling Pages (branch gh-pages):  https://<you>.github.io/<repo>/my-iptv.working.m3u
+on:
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run playlist:generate
+      - run: npm run my:build
+      - run: npm run my:check
+      - name: Publish to gh-pages
+        run: |
+          cd my-playlist/dist
+          touch .nojekyll
+          git init -q -b gh-pages
+          git config user.name "github-actions"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git commit -q -m "update $(date -u +%F)"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" gh-pages
