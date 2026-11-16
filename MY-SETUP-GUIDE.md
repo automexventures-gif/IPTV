@@ -112,6 +112,18 @@ npm run my:check -- --concurrency 40 --timeout 15000 --retries 2 --strict
 
 Speed is roughly concurrency divided by average response time. A few hundred channels finish in a few minutes. Testing all ~11,500 channels (empty filters) takes much longer and hits many servers, so filter first.
 
+## Step 7b (optional). Block dead links permanently
+
+After a check, save the definitive failures (404, dead domain, bad certificate, not a playlist) to your blocklist so future builds skip them:
+
+```bash
+npm run my:prune -- --dry-run   # preview, writes nothing
+npm run my:prune                # block definitive failures only
+npm run my:prune -- --all       # also block timeouts, 403, 5xx (risky: temporary failures get blocked for good)
+```
+
+This edits `blocklist_ids` in `my-playlist/preferences.json`. To undo, delete ids from that list. It uses the report from the last check, so run `npm run my:all` first.
+
 ## Step 8. Watch it
 
 Open `my-iptv.working.m3u` in VLC, Kodi, Jellyfin, TiviMate and similar apps (Network stream or Playlist URL).
