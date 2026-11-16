@@ -2,7 +2,7 @@
 // Adds streams that failed the last check to "blocklist_ids" in preferences.json,
 // so future builds no longer include them.
 // Usage:
-//   node my-playlist/prune.mjs [--report file.json] [--all] [--dry-run]
+//   node my-playlist/prune.mjs [--config my-playlist/preferences.arabic.json] [--report file.json] [--all] [--dry-run]
 // Default: only DEFINITIVE failures (404, dead domain, bad certificate, not a playlist).
 // --all  also blocks temporary-looking failures (timeouts, 403, 5xx...). Use with care:
 //        a stream that timed out today may work tomorrow, and 403s may only be geo-blocks for you.
@@ -17,8 +17,11 @@ const val = n => (args.includes(n) ? args[args.indexOf(n) + 1] : undefined)
 const ALL = args.includes('--all')
 const DRY = args.includes('--dry-run')
 
-const reportPath = path.resolve(val('--report') || path.join(HERE, 'dist/my-iptv.working.report.json'))
-const prefsPath = path.join(HERE, 'preferences.json')
+const prefsPath = path.resolve(val('--config') || path.join(HERE, 'preferences.json'))
+const cfgOut = fs.existsSync(prefsPath) ? JSON.parse(fs.readFileSync(prefsPath, 'utf8')).output || {} : {}
+const reportPath = path.resolve(
+  val('--report') || path.resolve(path.dirname(HERE), cfgOut.directory || 'my-playlist/dist', `${cfgOut.filename || 'my-iptv'}.working.report.json`)
+)
 
 for (const f of [reportPath, prefsPath]) {
   if (!fs.existsSync(f)) {

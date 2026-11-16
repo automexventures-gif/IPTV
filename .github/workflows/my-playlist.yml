@@ -1,6 +1,6 @@
 name: my-playlist
 # Daily: rebuild your playlist from upstream data, test every stream, publish ONLY the working ones.
-# URL (after enabling Pages on branch gh-pages):  https://<you>.github.io/<repo>/playlist.m3u
+# URLs (after enabling Pages on branch gh-pages):  .../playlist.m3u (main)  and  .../arabic.m3u (Arabic and Middle East)
 # Note: streams are tested from GitHub's US data centers, not from your home network.
 on:
   schedule:
@@ -25,16 +25,23 @@ jobs:
       - run: npm run playlist:generate
       - run: npm run my:build
       - run: npm run my:check -- --retries 2 --timeout 15000
+      - run: npm run my:arabic:build
+      - run: npm run my:arabic:check -- --retries 2 --timeout 15000
       - name: Safety check (never publish an empty or collapsed list)
         run: |
           n=$(grep -c '^#EXTINF' my-playlist/dist/my-iptv.working.m3u || true)
           echo "working channels: $n"
           if [ "$n" -lt 100 ]; then echo "Too few working streams ($n). Not publishing."; exit 1; fi
+          a=$(grep -c '^#EXTINF' my-playlist/dist/my-iptv-arabic.working.m3u || true)
+          echo "working arabic channels: $a"
+          if [ "$a" -lt 30 ]; then echo "Too few working Arabic streams ($a). Not publishing."; exit 1; fi
       - name: Publish only the working playlist to gh-pages
         run: |
           mkdir site
           cp my-playlist/dist/my-iptv.working.m3u site/playlist.m3u
           cp my-playlist/dist/my-iptv.working.report.json site/report.json
+          cp my-playlist/dist/my-iptv-arabic.working.m3u site/arabic.m3u
+          cp my-playlist/dist/my-iptv-arabic.working.report.json site/arabic-report.json
           printf '<!doctype html><meta charset=utf-8><title>My IPTV</title><p>Playlist URL: <code>playlist.m3u</code> (updated %s UTC)</p>' "$(date -u '+%F %H:%M')" > site/index.html
           touch site/.nojekyll
           cd site

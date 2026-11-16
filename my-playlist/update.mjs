@@ -3,7 +3,7 @@
 // already tested, tests only those, and merges the working ones into your working playlist.
 //
 // Usage:
-//   node my-playlist/update.mjs [--dry-run] [--retest-failed] [--no-download]
+//   node my-playlist/update.mjs [--config my-playlist/preferences.arabic.json] [--dry-run] [--retest-failed] [--no-download]
 //                               [--concurrency N] [--timeout MS] [--retries N]
 //
 //   --dry-run        show what is new/changed/removed, then stop (nothing tested, working list untouched)
@@ -36,7 +36,8 @@ const die = m => {
 const run = (cmd, a, opts = {}) => spawnSync(cmd, a, { stdio: 'inherit', cwd: ROOT, ...opts })
 
 // ---- paths from your preferences (same rules as build.mjs) ----
-const prefs = JSON.parse(fs.readFileSync(path.join(HERE, 'preferences.json'), 'utf8'))
+const CONFIG = path.resolve(val('--config') || path.join(HERE, 'preferences.json'))
+const prefs = JSON.parse(fs.readFileSync(CONFIG, 'utf8'))
 const o = prefs.output || {}
 const DIST = path.resolve(ROOT, o.directory || 'my-playlist/dist')
 const base = o.filename || 'my-iptv'
@@ -111,7 +112,7 @@ if (!has('--no-download')) {
   console.log(`upstream playlist: ${n} channels`)
 }
 console.log('Rebuilding your list from your preferences...')
-if (run(process.execPath, [path.join(HERE, 'build.mjs')]).status !== 0) die('build failed.')
+if (run(process.execPath, [path.join(HERE, 'build.mjs'), '--config', CONFIG]).status !== 0) die('build failed.')
 
 // ---- 3. diff ----
 const newBuild = readM3U(F.build)

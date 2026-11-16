@@ -1,0 +1,41 @@
+{
+  "_readme": "Arabic and Middle East profile. Football first. Build: npm run my:arabic. Separate output file, separate blocklist.",
+
+  "filters": {
+    "categories_include": [],
+    "categories_exclude": [],
+    "countries_include": ["dz","bh","km","dj","eg","iq","jo","kw","lb","ly","mr","ma","om","ps","qa","sa","so","sd","sy","tn","ae","ye","tr","ir","il"],
+    "countries_exclude": [],
+    "languages_include": [],
+    "languages_exclude": [],
+    "name_include": [],
+    "name_exclude": [],
+    "min_height": 0,
+    "max_height": 0,
+    "drop_unknown_quality": false,
+    "allow_geo_blocked": false,
+    "allow_not_247": true,
+    "exclude_closed": true
+  },
+
+  "always_include_ids": ["FIFAPlus.uk", "FIFAPlusWomen.uk", "beINSPORTSXTRA.us", "beINSPORTSXTRAenEspanol.us"],
+  "blocklist_ids": ["beINSports1.qa", "beINSports1Turk.tr", "beINSportsUSA.us"],
+
+  "extra_playlists": [],
+  "epg_url": "",
+  "max_channels": 0,
+
+  "output": {
+    "directory": "my-playlist/dist",
+    "filename": "my-iptv-arabic",
+    "group_by": "category",
+    "category_priority": ["sports","news","movies","series","documentary","kids","animation","comedy","music","education","science","business","weather","cooking","travel","outdoor","auto","lifestyle","culture","family","classic","relax","religious","legislative","shop","entertainment","general"],
+    "group_overrides": [
+      { "title_regex": "\\b(bein|fifa|football|futbol|soccer|calcio|premier league|epl|uefa|world cup|laliga|alkass|al kass|kass)\\b", "categories": ["sports"], "group": "Football" }
+    ],
+    "group_order": ["Football", "Sports", "News"],
+    "sort_by": "group_then_name",
+    "also_split_by": "none",
+    "extra_group_name": "Custom"
+  }
+}

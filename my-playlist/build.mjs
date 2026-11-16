@@ -213,6 +213,21 @@ async function main() {
     }
   }
 
+  // ----- optional group overrides, e.g. put football channels in their own "Football" group -----
+  // output.group_overrides: [{ "title_regex": "...", "categories": ["sports"], "group": "Football" }]
+  // first matching rule wins; "categories" (optional) must overlap the channel's categories
+  const rules = (o.group_overrides || []).map(r => ({
+    re: r.title_regex ? new RegExp(r.title_regex, 'i') : null,
+    cats: lc(r.categories),
+    group: r.group
+  }))
+  if (rules.length) {
+    for (const e of kept) {
+      const hit = rules.find(r => (!r.re || r.re.test(e.title)) && (!r.cats.length || anyOf(e.cats, r.cats)))
+      if (hit) e.group = hit.group
+    }
+  }
+
   // ----- extras (your own M3U files / URLs) -----
   const extras = []
   for (const src of cfg.extra_playlists || []) {
@@ -232,7 +247,12 @@ async function main() {
   // ----- sort / limit -----
   const sortKey = o.sort_by || 'group_then_name'
   const cmpName = (a, b) => a.title.localeCompare(b.title)
-  kept.sort(sortKey === 'name' ? cmpName : (a, b) => a.group.localeCompare(b.group) || cmpName(a, b))
+  const order = (o.group_order || []).map(x => x.toLowerCase())
+  const rank = g => {
+    const i = order.indexOf(String(g).toLowerCase())
+    return i === -1 ? order.length : i
+  }
+  kept.sort(sortKey === 'name' ? cmpName : (a, b) => rank(a.group) - rank(b.group) || a.group.localeCompare(b.group) || cmpName(a, b))
   let finalList = kept
   if (cfg.max_channels && finalList.length > cfg.max_channels) finalList = finalList.slice(0, cfg.max_channels)
   finalList = finalList.concat(extras)

@@ -157,6 +157,21 @@ Caveats: GitHub runners are in US data centers, so streams that block data cente
 
 Also disable the upstream workflows you do not need (Actions tab, `update`, `check`, `format`, `validate_*`). They are written for the upstream project and will fail or do nothing useful on a copy.
 
+## Extra profile: Arabic and Middle East (football first)
+
+A second preferences file, `my-playlist/preferences.arabic.json`, builds a separate playlist (`my-iptv-arabic`) from the Arab League countries plus Turkey, Iran and Israel. It has its own blocklist and output, so it never touches your main list. Channels matching football terms (beIN, FIFA, football, futbol, soccer, calcio, UEFA, World Cup, LaLiga, Al Kass) are grouped into **Football** at the top.
+
+```bash
+npm run my:arabic                 # build + test every stream
+npm run my:arabic:update -- --dry-run   # preview new channels
+npm run my:arabic:update          # test only new/changed links and merge
+npm run my:arabic:prune -- --dry-run    # preview blocking dead links
+```
+
+Output: `my-playlist/dist/my-iptv-arabic.working.m3u`. Edit `countries_include` to trim or widen the region. `always_include_ids` forces channels in regardless of country filters (used for FIFA+ and beIN SPORTS XTRA). `blocklist_ids` holds three beIN Sports entries whose streams come from unverified third-party hosts; remove them from that list if you want them.
+
+What the free database really contains for beIN, EPL and the World Cup: only beIN SPORTS XTRA (official free feeds) and FIFA+ (official). Paid beIN, Premier League and World Cup live feeds are not in the database.
+
 ## Keeping up with upstream
 
 ```bash
