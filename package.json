@@ -34,7 +34,9 @@
     "my:arabic:check": "node my-playlist/check.mjs my-playlist/dist/my-iptv-arabic.m3u",
     "my:arabic": "npm run my:arabic:build && npm run my:arabic:check",
     "my:arabic:update": "node my-playlist/update.mjs --config my-playlist/preferences.arabic.json",
-    "my:arabic:prune": "node my-playlist/prune.mjs --config my-playlist/preferences.arabic.json"
+    "my:arabic:prune": "node my-playlist/prune.mjs --config my-playlist/preferences.arabic.json",
+    "my:merge": "node my-playlist/merge.mjs",
+    "my:everything": "npm run my:all && npm run my:arabic && npm run my:merge"
   },
   "author": "Arhey",
   "private": true,

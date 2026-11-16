@@ -168,7 +168,9 @@ npm run my:arabic:update          # test only new/changed links and merge
 npm run my:arabic:prune -- --dry-run    # preview blocking dead links
 ```
 
-Output: `my-playlist/dist/my-iptv-arabic.working.m3u`. Edit `countries_include` to trim or widen the region. `always_include_ids` forces channels in regardless of country filters (used for FIFA+ and beIN SPORTS XTRA). `blocklist_ids` holds three beIN Sports entries whose streams come from unverified third-party hosts; remove them from that list if you want them.
+Output: `my-playlist/dist/my-iptv-arabic.working.m3u`.
+
+**One combined playlist:** `npm run my:merge` merges the main and Arabic working lists (duplicates removed, Football first) into `my-playlist/dist/my-iptv-combined.m3u`. `npm run my:everything` builds, tests and merges both profiles. The hosted workflow publishes this combined file as `playlist.m3u`, so one URL carries everything. Edit `countries_include` to trim or widen the region. `always_include_ids` forces channels in regardless of country filters (used for FIFA+ and beIN SPORTS XTRA). `blocklist_ids` holds three beIN Sports entries whose streams come from unverified third-party hosts; remove them from that list if you want them.
 
 What the free database really contains for beIN, EPL and the World Cup: only beIN SPORTS XTRA (official free feeds) and FIFA+ (official). Paid beIN, Premier League and World Cup live feeds are not in the database.
 
